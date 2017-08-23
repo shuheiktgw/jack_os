@@ -11,30 +11,101 @@
 class Memory {
 
   static Array ram;
+  static Array heap;
+  static int heapSize;
+  static Array freeListHead;
+  static Array freeListTail;
 
-    /** Initializes the class. */
+  /** Initializes the class. */
   function void init() {
-    let ram = 0;
+    var Array block;
+
+    let memory = 0;
+    let heap = 2048;
+    let heapSize = 14336;
+    let freeListHead = heap;
+    let freeListTail = 16382;
+    let block = heap + 2;
+    let block[0] = heapSize - 4;
+    let block[1] = freeListTail;
+    let freeListHead[0] = 2;
+    let freeListHead[1] = block;
+    let freeListTail[0] = 2;
+    let freeListTail[1] = 0;
+
+    return;
   }
 
-    /** Returns the RAM value at the given address. */
+  /** Returns the RAM value at the given address. */
   function int peek(int address) {
     return ram[address];
   }
 
-    /** Sets the RAM value at the given address to the given value. */
+  /** Sets the RAM value at the given address to the given value. */
   function void poke(int address, int value) {
     let ram[address] = value;
     return;
   }
 
-    /** Finds an available RAM block of the given size and returns
-     *  a reference to its base address. */
-    function int alloc(int size) {
+  /** Finds an available RAM block of the given size and returns
+   *  a reference to its base address. */
+  function int alloc(int size) {
+    var Array currentPointer;
+    var Array result;
+    var Array temp;
+
+    if(size < 1) {
+      do Sys.error(5);
     }
 
-    /** De-allocates the given object (cast as an array) by making
-     *  it available for future allocations. */
-    function void deAlloc(Array o) {
+    let currentPointer = freeListHead[1];
+    while(true) {
+      if(currentPointer = freeListTail) {
+        do Sys.error(6);
+      }
+      if(currentPointer[0] > (size + 2)) {
+        let temp = (currentPointer[0] - (size + 1)) + currentPointer;
+        let temp[0] = size + 1;
+        let result = temp + 1;
+        let currentPointer[0] = currentPointer[0] - (size + 1);
+        return result;
+      }
+      let currentPointer = currentPointer[1];
     }
+  }
+
+  /** De-allocates the given object (cast as an array) by making
+   *  it available for future allocations. */
+  function void deAlloc(Array o) {
+    var Array newNode;
+    var Array previous;
+    var Array current;
+
+    let newNode = o - 1;
+    let previous = freeListHead;
+    let current = previous[1];
+
+    while(true) {
+      if(current > newNode) {
+        let newNode[1] = current;
+        let previous[1] = newNode;
+        do Memory.mergeBlocks(newNode, current);
+        do Memory.mergeBlocks(previous, newNode);
+        return;
+      }
+      let previous = previous[1];
+      let current = current[1];
+    }
+  }
+
+  function void mergeBlocks(Array first, Array second) {
+    if(first = freeListHead) { return; }
+    if(second = freeListTail) { return; }
+
+    if((first + first[0]) = second) {
+      let first[0] = first[0] + second[0];
+      let first[1] = second[1];
+    }
+    return;
+  }
 }
