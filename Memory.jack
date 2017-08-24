@@ -20,7 +20,7 @@ class Memory {
   function void init() {
     var Array block;
 
-    let memory = 0;
+    let ram = 0;
     let heap = 2048;
     let heapSize = 14336;
     let freeListHead = heap;
@@ -72,6 +72,7 @@ class Memory {
       }
       let currentPointer = currentPointer[1];
     }
+    return result; /** Fake return to supress compiler error */
   }
 
   /** De-allocates the given object (cast as an array) by making
@@ -96,10 +97,10 @@ class Memory {
       let previous = previous[1];
       let current = current[1];
     }
+    return; /** Fake return to supress compiler error */
   }
 
   function void mergeBlocks(Array first, Array second) {
-    if(first = freeListHead) { return; }
     if(second = freeListTail) { return; }
 
     if((first + first[0]) = second) {
