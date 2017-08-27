@@ -6,38 +6,76 @@
 /**
  * A library of functions for displaying graphics on the screen.
  * The Hack physical screen consists of 512 rows (indexed 0..511, top to bottom)
- * of 256 pixels each (indexed 0..255, left to right). The top left pixel on 
+ * of 256 pixels each (indexed 0..255, left to right). The top left pixel on
  * the screen is indexed (0,0).
  */
 class Screen {
+    static Array twoToThe;
 
     /** Initializes the Screen. */
     function void init() {
+      var int i, v;
+
+      let i = 0;
+      let v = 1;
+      let twoToThe = Array.new(16);
+
+      while(i < 16) {
+        let twoToThe[i] = v;
+
+        let i = i + 1;
+        let v = v + v;
+      }
+
+      return;
     }
 
     /** Erases the entire screen. */
     function void clearScreen() {
+      return;
     }
 
     /** Sets the current color, to be used for all subsequent drawXXX commands.
      *  Black is represented by true, white by false. */
     function void setColor(boolean b) {
+      return;
     }
 
     /** Draws the (x,y) pixel, using the current color. */
     function void drawPixel(int x, int y) {
+      var int q;
+      var int address;
+      var int currentValue;
+
+      var int residual;
+      var int index;
+
+      var int result;
+
+      let q = x / 16;
+      let address = (32 * y) + q;
+      let currentValue = Memory.peek(16384 + address);
+      let residual = x - (q * x) - 1
+      let index = 15 - residual;
+
+      let result = twoToThe[index] | currentValue;
+      Memory.poke(16384 + address, result);
+      return;
     }
 
     /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
     function void drawLine(int x1, int y1, int x2, int y2) {
+      return;
     }
 
     /** Draws a filled rectangle whose top left corner is (x1, y1)
      * and bottom right corner is (x2,y2), using the current color. */
     function void drawRectangle(int x1, int y1, int x2, int y2) {
+      return;
     }
 
     /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
     function void drawCircle(int x, int y, int r) {
+      return;
     }
 }

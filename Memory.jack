@@ -18,18 +18,18 @@ class Memory {
 
   /** Initializes the class. */
   function void init() {
-    var Array block;
+    var Array initialiBlock;
 
     let ram = 0;
     let heap = 2048;
     let heapSize = 14336;
     let freeListHead = heap;
     let freeListTail = 16382;
-    let block = heap + 2;
-    let block[0] = heapSize - 4;
-    let block[1] = freeListTail;
+    let initialiBlock = heap + 2;
+    let initialiBlock[0] = heapSize - 4;
+    let initialiBlock[1] = freeListTail;
     let freeListHead[0] = 2;
-    let freeListHead[1] = block;
+    let freeListHead[1] = initialiBlock;
     let freeListTail[0] = 2;
     let freeListTail[1] = 0;
 
@@ -101,6 +101,7 @@ class Memory {
   }
 
   function void mergeBlocks(Array first, Array second) {
+    if(first = freeListHead) { return; }
     if(second = freeListTail) { return; }
 
     if((first + first[0]) = second) {
