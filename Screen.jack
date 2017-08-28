@@ -11,10 +11,13 @@
  */
 class Screen {
     static Array twoToThe;
+    static boolean color;
 
     /** Initializes the Screen. */
     function void init() {
       var int i, v;
+
+      let color = true;
 
       let i = 0;
       let v = 1;
@@ -38,6 +41,7 @@ class Screen {
     /** Sets the current color, to be used for all subsequent drawXXX commands.
      *  Black is represented by true, white by false. */
     function void setColor(boolean b) {
+      let color = b;
       return;
     }
 
@@ -56,7 +60,12 @@ class Screen {
       let address = 16384 + (32 * y) + q;
       let index = x - (q * 16);
 
-      Memory.poke(address, twoToThe[index] | Memory.peek(address));
+      if(color) {
+        do Memory.poke(address, Memory.peek(address) | twoToThe[index]);
+      } else {
+        do Memory.poke(address, Memory.peek(address) & (~twoToThe[index]));
+      }
+
       return;
     }
 
@@ -92,6 +101,30 @@ class Screen {
       return;
     }
 
+    function void drawHorizontalLine(int x1, int x2, int y) {
+      var int left;
+
+      let left = x1;
+      while(~(left > x2)) {
+        do drawPixel(left, y);
+        let left = left + 1;
+      }
+
+      return;
+    }
+
+    function void drawVertialLine(int x, int y1, int y2) {
+      var int bottom;
+
+      let bottom = y1;
+      while(~(bottom > y2)) {
+        do drawPixel(x, bottom);
+        let bottom = bottom + 1;
+      }
+
+      return;
+    }
+
     /** Draws a filled rectangle whose top left corner is (x1, y1)
      * and bottom right corner is (x2,y2), using the current color. */
     function void drawRectangle(int x1, int y1, int x2, int y2) {
@@ -100,17 +133,17 @@ class Screen {
 
     /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
     function void drawCircle(int x, int y, int r) {
-      var int start, end, dy, sqrt;
+      var int bottom, top, dy, sqrt;
 
-      let start = x - r;
-      let end = y + r;
+      let bottom = x - r;
+      let top = y + r;
 
-      while(~(start > end)) {
-        let dy = Math.abs(y - start);
+      while(~(bottom > top)) {
+        let dy = Math.abs(y - bottom);
         let sqrt = Math.sqrt((r*r) - (dy*dy));
 
-        do drawLine(x - sqrt + dy, x + sqrt + dy)
-        start = start + 1;
+        do drawHorizontalLine(x - sqrt + dy, x + sqrt + dy, bottom);
+        let bottom = bottom + 1;
       }
 
       return;
