@@ -43,28 +43,52 @@ class Screen {
 
     /** Draws the (x,y) pixel, using the current color. */
     function void drawPixel(int x, int y) {
-      var int q;
-      var int address;
-      var int currentValue;
+      var int q, address, index;
 
-      var int residual;
-      var int index;
-
-      var int result;
+      if((x < 0) | (x > 511)) {
+        do Sys.error(7);
+      }
+      if((y < 0) | (y > 255)) {
+        do Sys.error(7);
+      }
 
       let q = x / 16;
-      let address = (32 * y) + q;
-      let currentValue = Memory.peek(16384 + address);
-      let residual = x - (q * x) - 1
-      let index = 15 - residual;
+      let address = 16384 + (32 * y) + q;
+      let index = x - (q * 16);
 
-      let result = twoToThe[index] | currentValue;
-      Memory.poke(16384 + address, result);
+      Memory.poke(address, twoToThe[index] | Memory.peek(address));
       return;
     }
 
     /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
     function void drawLine(int x1, int y1, int x2, int y2) {
+      var int a, b, dx, dy, diff;
+
+      if((x1 < 0) | (x2 < 0) | (x1 > 511) | (x2 > 511)) {
+        do Sys.error(7);
+      }
+      if((y1 < 0) | (y2 > 255) | (y1 < 0) | (y2 > 255)) {
+        do Sys.error(7);
+      }
+
+      let a = 0;
+      let b = 0;
+      let dx = x2 - x1;
+      let dy = y2 - y1;
+      let diff = 0;
+
+      while (((x1 + a < x2) | (x1 + a == x2)) & ((y1 + b < y2) | (y1 + b == y2))) {
+        do drawPixel(x + a, y + b);
+
+        if (diff < 0) {
+          let a = a + 1;
+          let diff = diff + dy;
+        } else {
+          let b = b + 1;
+          let diff = diff - dx;
+        }
+      }
+
       return;
     }
 
