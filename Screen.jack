@@ -35,13 +35,21 @@ class Screen {
 
     /** Erases the entire screen. */
     function void clearScreen() {
+      var boolean currentColor;
+
+      let currentColor = color;
+      let color = false;
+
+      do drawRectangle(0, 0, 511, 255);
+
+      let color = currentColor;
       return;
     }
 
     /** Sets the current color, to be used for all subsequent drawXXX commands.
      *  Black is represented by true, white by false. */
-    function void setColor(boolean b) {
-      let color = b;
+    function void setColor(boolean bool) {
+      let color = bool;
       return;
     }
 
@@ -86,48 +94,117 @@ class Screen {
       let dy = y2 - y1;
       let diff = 0;
 
-      while (((x1 + a < x2) | (x1 + a = x2)) & ((y1 + b < y2) | (y1 + b = y2))) {
+      if(x1 = x2) {
+        do Screen.drawVerticalLine(x1, Math.min(y1, y2), Math.max(y1, y2));
+        return;
+      }
+      if(y1 = y2) {
+        do Screen.drawHorizontalLine(y1, Math.min(x1, x2), Math.max(x1, x2));
+        return;
+      }
+      if((x1 < x2) & (y1 < y2)) {
+        do Screen.drawPosSlopedLine(x1, y1, x2 - x1, y2 - y1);
+        return;
+      }
+      if((x2 < x1) & (y2 < y1)) {
+        do Screen.drawPosSlopedLine(x2, y2, x1 - x2, y1 - y2);
+        return;
+      }
+      if((x1 < x2) & (y1 > y2)) {
+        do Screen.drawNegSlopedLine(x1, y1, x2 - x1, y2 - y1);
+        return;
+      }
+      if((x2 < x1) & (y1 < y2)) {
+        do Screen.drawNegSlopedLine(x2, y2, x1 - x2, y1 - y2);
+        return;
+      }
+
+      return;
+    }
+
+    /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
+    function void drawPositiveLine(int x, int y, int dx, int dy) {
+      var int a, b, diff;
+
+      let a = 0;
+      let b = 0;
+      let diff = 0;
+
+      while ((a < dx) & (b < dy)) {
         do drawPixel(x + a, y + b);
 
-        if (diff < 0) {
+        if (diff > 0) {
           let a = a + 1;
-          let diff = diff + dy;
+          let diff = diff - dy;
         } else {
           let b = b + 1;
-          let diff = diff - dx;
+          let diff = diff + dx;
         }
       }
 
       return;
     }
 
-    function void drawHorizontalLine(int x1, int x2, int y) {
-      var int left;
+    /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
+    function void drawNegativeLine(int x, int y, int dx, int dy) {
+      var int a, b, diff;
 
-      let left = x1;
-      while(~(left > x2)) {
-        do drawPixel(left, y);
-        let left = left + 1;
+      let a = 0;
+      let b = 0;
+      let diff = 0;
+
+      while ((a < dx) & (b > dy)) {
+        do drawPixel(x + a, y + b);
+
+        if (diff > 0) {
+          let b = b - 1;
+          let diff = diff - dx;
+        } else {
+          let a = a + 1;
+          let diff = diff - dy;
+        }
       }
 
       return;
     }
 
-    function void drawVertialLine(int x, int y1, int y2) {
-      var int bottom;
-
-      let bottom = y1;
-      while(~(bottom > y2)) {
-        do drawPixel(x, bottom);
-        let bottom = bottom + 1;
+    function void drawHorizontalLine(int y, int x1, int x2) {
+      do Screen.drawPixel(x1, y);
+      while(x1 < x2) {
+        let x1 = x1 + 1;
+        do Screen.drawPixel(x1, y);
       }
+      return;
+    }
 
+    function void drawVertialLine(int x, int y1, int y2) {
+      do Screen.drawPixel(x, y1);
+      while(y1 < y2) {
+        let y1 = y1 + 1;
+        do Screen.drawPixel(x, y1);
+      }
       return;
     }
 
     /** Draws a filled rectangle whose top left corner is (x1, y1)
      * and bottom right corner is (x2,y2), using the current color. */
     function void drawRectangle(int x1, int y1, int x2, int y2) {
+      if((x1 < 0) | (x2 < 0) | (x1 > 511) | (x2 > 511)) {
+        do Sys.error(7);
+      }
+      if((y1 < 0) | (y2 > 255) | (y1 < 0) | (y2 > 255)) {
+        do Sys.error(7);
+      }
+
+      if((x1 > x2) | (y1 > y2)) {
+        do Sys.error(9);
+      }
+
+      do Screen.drawVerticalLine(x1, y1, y2);
+      while(x1 < x2) {
+        let x1 = x1 + 1;
+        do Screen.drawVerticalLine(x1, y1, y2);
+      }
       return;
     }
 
@@ -142,7 +219,7 @@ class Screen {
         let dy = Math.abs(y - bottom);
         let sqrt = Math.sqrt((r*r) - (dy*dy));
 
-        do drawHorizontalLine(x - sqrt + dy, x + sqrt + dy, bottom);
+        do drawHorizontalLine(bottom, Math.max(0, x - sqrt), Math.min(511, x + sqrt));
         let bottom = bottom + 1;
       }
 
