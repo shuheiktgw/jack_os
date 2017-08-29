@@ -40,7 +40,7 @@ class Screen {
       let currentColor = color;
       let color = false;
 
-      do drawRectangle(0, 0, 511, 255);
+      do Screen.drawRectangle(0, 0, 511, 255);
 
       let color = currentColor;
       return;
@@ -103,19 +103,19 @@ class Screen {
         return;
       }
       if((x1 < x2) & (y1 < y2)) {
-        do Screen.drawPosSlopedLine(x1, y1, x2 - x1, y2 - y1);
+        do Screen.drawPositiveLine(x1, y1, x2 - x1, y2 - y1);
         return;
       }
       if((x2 < x1) & (y2 < y1)) {
-        do Screen.drawPosSlopedLine(x2, y2, x1 - x2, y1 - y2);
+        do Screen.drawPositiveLine(x2, y2, x1 - x2, y1 - y2);
         return;
       }
       if((x1 < x2) & (y1 > y2)) {
-        do Screen.drawNegSlopedLine(x1, y1, x2 - x1, y2 - y1);
+        do Screen.drawNegativeLine(x1, y1, x2 - x1, y2 - y1);
         return;
       }
       if((x2 < x1) & (y1 < y2)) {
-        do Screen.drawNegSlopedLine(x2, y2, x1 - x2, y1 - y2);
+        do Screen.drawNegativeLine(x2, y2, x1 - x2, y1 - y2);
         return;
       }
 
@@ -131,7 +131,7 @@ class Screen {
       let diff = 0;
 
       while ((a < dx) & (b < dy)) {
-        do drawPixel(x + a, y + b);
+        do Screen.drawPixel(x + a, y + b);
 
         if (diff > 0) {
           let a = a + 1;
@@ -154,7 +154,7 @@ class Screen {
       let diff = 0;
 
       while ((a < dx) & (b > dy)) {
-        do drawPixel(x + a, y + b);
+        do Screen.drawPixel(x + a, y + b);
 
         if (diff > 0) {
           let b = b - 1;
@@ -177,7 +177,7 @@ class Screen {
       return;
     }
 
-    function void drawVertialLine(int x, int y1, int y2) {
+    function void drawVerticalLine(int x, int y1, int y2) {
       do Screen.drawPixel(x, y1);
       while(y1 < y2) {
         let y1 = y1 + 1;
@@ -219,7 +219,7 @@ class Screen {
         let dy = Math.abs(y - bottom);
         let sqrt = Math.sqrt((r*r) - (dy*dy));
 
-        do drawHorizontalLine(bottom, Math.max(0, x - sqrt), Math.min(511, x + sqrt));
+        do Screen.drawHorizontalLine(bottom, Math.max(0, x - sqrt), Math.min(511, x + sqrt));
         let bottom = bottom + 1;
       }
 
