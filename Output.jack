@@ -199,7 +199,7 @@ class Output {
 
     /** Moves the cursor to the j-th column of the i-th row,
      *  and erases the character displayed there. */
-    function void moveCursor(int x, int y) {
+    function void moveCursor(int y, int x) {
       if (x < 0 | x > 63 | y < 0 | y > 22) {
         do Sys.error(10);
       }
@@ -239,6 +239,15 @@ class Output {
     /** displays the given string starting at the cursor location,
      *  and advances the cursor appropriately. */
     function void printString(String s) {
+      var int i;
+
+      let i = 0;
+      while(i < s.length()) {
+        do Output.printChar(s.charAt(i));
+        let i = i + 1;
+      }
+
+      return;
     }
 
     /** Displays the given integer starting at the cursor location,
@@ -248,6 +257,12 @@ class Output {
 
     /** Advances the cursor to the beginning of the next line. */
     function void println() {
+      if(cursorY = 22) {
+        do Output.moveCursor(0, 0);
+        return;
+      }
+
+      do Output.moveCursor(cursorY + 1, 0);
     }
 
     /** Moves the cursor one column back. */
