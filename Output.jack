@@ -29,6 +29,7 @@ class Output {
 
       do Output.initMap();
       do Output.initTwoToThe();
+      return;
     }
 
     // Initializes the character map array
@@ -231,7 +232,7 @@ class Output {
          do Output.println();
        }
        else {
-         do Output.moveCursor(cursorX + 1, cursorY);
+         do Output.moveCursor(cursorY, cursorX + 1);
        }
        return;
      }
@@ -271,21 +272,15 @@ class Output {
       }
 
       do Output.moveCursor(cursorY + 1, 0);
+      return;
     }
 
     /** Moves the cursor one column back. */
     function void backSpace() {
-      if(cursorX = 0 & cursorY = 0) {
-        do Output.moveCursor(0, 0);
-        return;
+      if(cursorX > 0) {
+        do Output.moveCursor(cursorY, cursorX - 1);
       }
 
-      if(cursorX = 0) {
-        do Output.moveCursor(cursorY - 1, 63);
-        return;
-      }
-
-      do Output.moveCursor(cursorY - 1, cursorX - 1);
       return;
     }
 
